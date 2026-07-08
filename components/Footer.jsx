@@ -1,4 +1,5 @@
 import Logo from "@/components/Logo";
+import { SOCIAL_LINKS, externalLinkProps } from "@/lib/site";
 
 const COLUMNS = [
   {
@@ -20,9 +21,9 @@ const COLUMNS = [
   {
     title: "Social",
     links: [
-      { label: "LinkedIn", href: "#" },
-      { label: "X (Twitter)", href: "#" },
-      { label: "Instagram", href: "#" },
+      { label: "LinkedIn", href: SOCIAL_LINKS.linkedin, external: true },
+      { label: "Instagram", href: SOCIAL_LINKS.instagram, external: true },
+      { label: "Facebook", href: SOCIAL_LINKS.facebook, external: true },
     ],
   },
 ];
@@ -58,7 +59,9 @@ export default function Footer() {
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <a
-                      href={link.href}
+                      {...(link.external
+                        ? externalLinkProps(link.href)
+                        : { href: link.href })}
                       className="text-sm text-muted transition-colors hover:text-ink"
                     >
                       {link.label}
