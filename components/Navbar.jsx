@@ -9,7 +9,6 @@ import { demoLinkProps } from "@/lib/site";
 const LINKS = [
   { label: "Services", href: "#services" },
   { label: "Packages", href: "#packages" },
-  { label: "Team", href: "#team" },
   { label: "Contact", href: "#contact" },
 ];
 

@@ -7,7 +7,8 @@ import Services from "@/components/Services";
 import Packages from "@/components/Packages";
 import HowItWorks from "@/components/HowItWorks";
 import Comparison from "@/components/Comparison";
-import Team from "@/components/Team";
+// Team section paused for now — re-enable once founder details/photos are ready.
+// import Team from "@/components/Team";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -24,7 +25,7 @@ export default function Page() {
         <Packages />
         <HowItWorks />
         <Comparison />
-        <Team />
+        {/* <Team /> paused — see import note above */}
         <FinalCTA />
       </main>
       <Footer />
