@@ -1,0 +1,15 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: prism-web:latest
+    container_name: prism-web
+    ports:
+      - "3000:3000"
+    environment:
+      # Contact-form email delivery (Gmail SMTP). Set these in a .env file next to
+      # this compose file (see .env.docker.example) or export them in the shell.
+      GMAIL_USER: ${GMAIL_USER:-}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+    restart: unless-stopped

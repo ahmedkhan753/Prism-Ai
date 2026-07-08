@@ -132,6 +132,38 @@ drives `metadataBase`, canonical, sitemap, and robots.
    route uses a dev fallback that sends nothing).
 5. **Deploy.**
 
+## Deploy with Docker (self-hosted server)
+
+The app builds to a Next.js **standalone** server and ships as a small (~230 MB)
+production image. Email creds are passed **at runtime**, never baked into the image.
+
+**Quickest — docker compose:**
+
+```bash
+cp .env.docker.example .env          # then fill GMAIL_APP_PASSWORD (.env is gitignored)
+docker compose up -d --build         # builds the image and starts the container
+# → http://localhost:3000
+```
+
+**Or plain Docker:**
+
+```bash
+docker build -t prism-web:latest .
+docker run -d --name prism-web -p 3000:3000 \
+  -e GMAIL_USER=prismaiorganization@gmail.com \
+  -e GMAIL_APP_PASSWORD=your16charapppassword \
+  prism-web:latest
+```
+
+Notes:
+- The container listens on **port 3000** (`PORT`/`HOSTNAME` are preset). Put Nginx/
+  Caddy or your load balancer in front for TLS on a public server.
+- Without the `GMAIL_*` vars the site still runs; the contact route uses its dev
+  fallback (returns `ok:true`, sends nothing).
+- A `HEALTHCHECK` pings `/` so orchestrators can see readiness.
+- Update the image after code changes: `docker compose up -d --build` (or rebuild
+  and re-run).
+
 ## Team
 
 Founder cards render from the `TEAM` array in [lib/site.js](lib/site.js). Drop real
