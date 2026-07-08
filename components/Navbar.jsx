@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import PrismMark from "@/components/PrismMark";
+import Logo from "@/components/Logo";
+import { demoLinkProps } from "@/lib/site";
 
 const LINKS = [
   { label: "Features", href: "#features" },
@@ -39,7 +40,7 @@ export default function Navbar() {
           className="flex items-center gap-2.5"
           aria-label="Prism home"
         >
-          <PrismMark size={30} />
+          <Logo size={28} />
           <span
             className="font-display text-lg font-semibold text-ink"
             style={{ letterSpacing: "0.14em" }}
@@ -59,7 +60,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="#contact"
+            {...demoLinkProps()}
             className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5"
           >
             Book a Demo
@@ -99,7 +100,7 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="#contact"
+                {...demoLinkProps()}
                 onClick={closeMenu}
                 className="mt-2 rounded-full bg-ink px-5 py-3 text-center text-sm font-semibold text-white"
               >

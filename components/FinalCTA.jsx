@@ -3,8 +3,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 const EASE = [0.22, 1, 0.36, 1];
+
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+// Set in Vercel → Settings → Environment Variables and in .env.local.
+// When missing, the form falls back to a client-side success state.
+const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 
 const BUSINESS_TYPES = [
   "Real Estate",
@@ -13,15 +19,79 @@ const BUSINESS_TYPES = [
   "Other",
 ];
 
-export default function FinalCTA() {
-  const [submitted, setSubmitted] = useState(false);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleSubmit = (e) => {
+export default function FinalCTA() {
+  // idle | loading | success | error
+  const [status, setStatus] = useState("idle");
+  const [validationMsg, setValidationMsg] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: wire to Formspree / Resend / a Next.js route handler to actually
-    // deliver the enquiry. For now we just show the client-side success state.
-    setSubmitted(true);
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    // Honeypot: if a bot filled the hidden field, pretend success and drop it.
+    if (data.get("botcheck")) {
+      setStatus("success");
+      return;
+    }
+
+    const name = String(data.get("name") || "").trim();
+    const email = String(data.get("email") || "").trim();
+    const company = String(data.get("company") || "").trim();
+    const businessType = String(data.get("businessType") || "").trim();
+    const message = String(data.get("message") || "").trim();
+
+    // Validate before send.
+    if (!name) {
+      setValidationMsg("Please enter your name.");
+      return;
+    }
+    if (!EMAIL_RE.test(email)) {
+      setValidationMsg("Please enter a valid work email.");
+      return;
+    }
+    setValidationMsg("");
+
+    // Fallback: no key configured → keep the client-side success so dev/build
+    // works without any secret.
+    if (!ACCESS_KEY) {
+      setStatus("success");
+      return;
+    }
+
+    setStatus("loading");
+    try {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          subject: `New Prism enquiry — ${name}`,
+          from_name: "Prism Website",
+          name,
+          email,
+          company,
+          business_type: businessType,
+          message,
+        }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.success) {
+        setStatus("success");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   };
+
+  const loading = status === "loading";
 
   return (
     <section id="contact" className="py-20 sm:py-28">
@@ -76,7 +146,7 @@ export default function FinalCTA() {
             className="relative mx-auto mt-10 max-w-xl"
           >
             <div className="rounded-3xl border border-line bg-white p-6 shadow-[0_1px_2px_rgba(12,21,36,0.04)] sm:p-8">
-              {submitted ? (
+              {status === "success" ? (
                 <div className="flex flex-col items-center py-10 text-center">
                   <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-spectrum-violet/10 text-spectrum-violet">
                     <Check size={26} strokeWidth={2.5} />
@@ -89,7 +159,17 @@ export default function FinalCTA() {
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-4 text-left">
+                <form onSubmit={handleSubmit} className="space-y-4 text-left" noValidate>
+                  {/* Honeypot — hidden from humans, catches bots. */}
+                  <input
+                    type="checkbox"
+                    name="botcheck"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
+                  />
+
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label="Name" htmlFor="name">
                       <input
@@ -155,12 +235,31 @@ export default function FinalCTA() {
                     />
                   </Field>
 
+                  {validationMsg && (
+                    <p className="text-sm text-red-500" role="alert">
+                      {validationMsg}
+                    </p>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5"
+                    disabled={loading}
+                    className="w-full rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
                   >
-                    Book a Demo
+                    {loading ? "Sending…" : "Book a Demo"}
                   </button>
+
+                  {status === "error" && (
+                    <p className="text-center text-sm text-red-500" role="alert">
+                      Something went wrong — email us at{" "}
+                      <a
+                        href={`mailto:${CONTACT_EMAIL}`}
+                        className="font-medium underline underline-offset-2"
+                      >
+                        {CONTACT_EMAIL}
+                      </a>
+                    </p>
+                  )}
                 </form>
               )}
             </div>
@@ -168,10 +267,10 @@ export default function FinalCTA() {
             <p className="mt-5 text-center text-sm text-muted">
               Prefer email? Reach us at{" "}
               <a
-                href="mailto:hello@prism.ai"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="font-medium text-ink underline-offset-4 hover:underline"
               >
-                hello@prism.ai
+                {CONTACT_EMAIL}
               </a>
             </p>
           </motion.div>

@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import PrismSignature from "@/components/PrismSignature";
+import { demoLinkProps } from "@/lib/site";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -77,7 +78,7 @@ export default function Hero() {
           className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <a
-            href="#contact"
+            {...demoLinkProps()}
             className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 sm:w-auto"
           >
             Book a Demo

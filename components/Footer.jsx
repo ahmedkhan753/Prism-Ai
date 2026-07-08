@@ -1,4 +1,4 @@
-import PrismMark from "@/components/PrismMark";
+import Logo from "@/components/Logo";
 
 const COLUMNS = [
   {
@@ -36,7 +36,7 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div className="max-w-xs">
             <div className="flex items-center gap-2.5">
-              <PrismMark size={28} />
+              <Logo size={28} />
               <span
                 className="font-display text-lg font-semibold text-ink"
                 style={{ letterSpacing: "0.14em" }}

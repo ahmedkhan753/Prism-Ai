@@ -5,9 +5,10 @@ import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata = {
-  metadataBase: new URL("https://prism-ai.vercel.app"),
+  metadataBase: new URL(SITE_URL),
   title: "Prism — AI voice agents & automation for real estate and construction",
   description:
     "Prism builds AI voice agents, follow-up automation, and insights for real estate and construction teams — capturing every lead and handling client calls around the clock.",
@@ -18,14 +19,22 @@ export const metadata = {
     "lead follow-up",
     "AI agency",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Prism — AI for real estate & construction",
     description:
       "AI voice agents, follow-up automation, and insights that capture every lead — with your team in control.",
+    url: "/",
+    siteName: "Prism",
     type: "website",
   },
-  icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+  twitter: {
+    card: "summary_large_image",
+    title: "Prism — AI for real estate & construction",
+    description:
+      "AI voice agents, follow-up automation, and insights that capture every lead — with your team in control.",
   },
 };
 
