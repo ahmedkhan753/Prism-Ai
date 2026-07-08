@@ -7,10 +7,8 @@ import { CONTACT_EMAIL } from "@/lib/site";
 
 const EASE = [0.22, 1, 0.36, 1];
 
-const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-// Set in Vercel → Settings → Environment Variables and in .env.local.
-// When missing, the form falls back to a client-side success state.
-const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
+// Same-origin route handler (Nodemailer over the client's Gmail SMTP).
+const CONTACT_ENDPOINT = "/api/contact";
 
 const BUSINESS_TYPES = [
   "Real Estate",
@@ -54,34 +52,22 @@ export default function FinalCTA() {
     }
     setValidationMsg("");
 
-    // Fallback: no key configured → keep the client-side success so dev/build
-    // works without any secret.
-    if (!ACCESS_KEY) {
-      setStatus("success");
-      return;
-    }
-
     setStatus("loading");
     try {
-      const res = await fetch(WEB3FORMS_ENDPOINT, {
+      const res = await fetch(CONTACT_ENDPOINT, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          access_key: ACCESS_KEY,
-          subject: `New Prism enquiry — ${name}`,
-          from_name: "Prism Website",
           name,
           email,
           company,
-          business_type: businessType,
+          businessType,
           message,
+          botcheck: "",
         }),
       });
       const json = await res.json().catch(() => ({}));
-      if (res.ok && json.success) {
+      if (res.ok && json.ok) {
         setStatus("success");
       } else {
         setStatus("error");

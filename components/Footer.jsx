@@ -1,21 +1,14 @@
 import Logo from "@/components/Logo";
-import { SOCIAL_LINKS, externalLinkProps } from "@/lib/site";
+import { SOCIAL_LINKS, CONTACT_EMAIL, externalLinkProps } from "@/lib/site";
 
 const COLUMNS = [
   {
     title: "Product",
     links: [
-      { label: "Features", href: "#features" },
+      { label: "Services", href: "#services" },
+      { label: "Packages", href: "#packages" },
       { label: "Compare", href: "#compare" },
       { label: "Book a Demo", href: "#contact" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "About", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Contact", href: "#contact" },
     ],
   },
   {
@@ -34,7 +27,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-line">
       <div className="mx-auto max-w-container px-5 py-14 sm:px-8">
-        <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 md:grid-cols-[1.6fr_1fr_1fr]">
           <div className="max-w-xs">
             <div className="flex items-center gap-2.5">
               <Logo size={28} />
@@ -48,6 +41,12 @@ export default function Footer() {
             <p className="mt-4 text-sm leading-relaxed text-muted">
               AI voice agents and automation for real estate and construction teams.
             </p>
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-4 inline-block text-sm font-medium text-ink underline-offset-4 hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
           </div>
 
           {COLUMNS.map((col) => (
@@ -73,16 +72,8 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-line pt-6 text-sm text-muted sm:flex-row">
+        <div className="mt-12 border-t border-line pt-6 text-sm text-muted">
           <p>&copy; {year} Prism. All rights reserved.</p>
-          <div className="flex items-center gap-6">
-            <a href="#" className="transition-colors hover:text-ink">
-              Terms
-            </a>
-            <a href="#" className="transition-colors hover:text-ink">
-              Privacy
-            </a>
-          </div>
         </div>
       </div>
     </footer>

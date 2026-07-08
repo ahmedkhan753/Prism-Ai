@@ -34,30 +34,32 @@ app/
   layout.jsx        fontsource imports + metadata + <html>/<body>
   globals.css       tailwind directives, tokens, utilities, reduced-motion
   page.jsx          composes sections in order
+  api/contact/route.js  Nodemailer/Gmail SMTP contact endpoint (serverless)
+  icon.svg          tab favicon (file convention)
+  apple-icon.png · opengraph-image.png   generated brand images (static)
+  robots.js · sitemap.js
 components/
   Logo.jsx          Prism logo mark SVG (size prop)
-  PrismSignature.jsx  ambient prism-refraction hero graphic
+  PrismSignature.jsx  animated hero prism (rays draw up + shimmer + float)
   Reveal.jsx        motion fade-up wrapper (whileInView, once)
   Navbar.jsx        sticky nav, blur-on-scroll, mobile menu
   Hero.jsx          staggered load + prism signature
+  Stats.jsx         three animated count-ups
   Vision.jsx        positioning statement
-  Features.jsx      3 cards, hover lift + spectrum top-border
-  Highlights.jsx    4-up supporting points
+  Solutions.jsx     three solution pillars
+  Services.jsx      bento grid of 8 services
+  Packages.jsx      three tiers + flagship band
+  HowItWorks.jsx    3 steps with animated connectors
   Comparison.jsx    old-way vs Prism + mid CTA
-  FinalCTA.jsx      contact form with client-side success state
-  Footer.jsx        brand + link columns
+  Team.jsx          founder cards (data from lib/site.js TEAM)
+  FinalCTA.jsx      contact form (POSTs /api/contact)
+  Footer.jsx        brand + Product/Social columns
 lib/
-  site.js           contact email, SITE_URL, BOOKING_URL + demo link helper
-  logo.js           logo SVG/data-URI for next/og images
-app/
-  icon.svg          tab favicon (file convention)
-  apple-icon.jsx    180×180 Apple touch icon (next/og)
-  opengraph-image.jsx  1200×630 OG/Twitter card (next/og)
-  robots.js · sitemap.js
+  site.js           email, SITE_URL, BOOKING_URL, SOCIAL_LINKS, TEAM + helpers
 ```
 
-Page order: **Navbar → Hero → Vision → Features → Highlights → Comparison →
-FinalCTA → Footer**.
+Page order: **Navbar → Hero → Stats → Vision → Solutions → Services → Packages →
+How it works → Comparison → Team → FinalCTA → Footer**.
 
 ## Design system
 
@@ -77,27 +79,30 @@ FinalCTA → Footer**.
 - Animation is transform/opacity only, with `viewport={{ once: true }}` to avoid
   layout thrash.
 
-## The contact form (Web3Forms)
+## The contact form (self-owned Gmail SMTP)
 
-The contact form in [FinalCTA.jsx](components/FinalCTA.jsx) delivers enquiries to
-`prism.ai.organization@gmail.com` via [Web3Forms](https://web3forms.com) — no
-backend, no domain setup. It has loading / success / error states, trims + validates
-name and email, and includes a hidden honeypot (`botcheck`) for spam.
+The form in [FinalCTA.jsx](components/FinalCTA.jsx) POSTs (same-origin, no CORS) to
+[app/api/contact/route.js](app/api/contact/route.js), a Node serverless route that
+emails the enquiry to your Gmail via **Nodemailer over Gmail SMTP** — no third-party
+form vendor. It has loading / success / error states, trims + validates name and
+email, and includes a hidden honeypot (`botcheck`) for spam.
 
-**Set it up:**
+**Set it up (Gmail App Password):**
 
-1. Go to [web3forms.com](https://web3forms.com), enter the destination email
-   (`prism.ai.organization@gmail.com`), and copy the **access key** (no login).
-2. Local dev: copy `.env.example` → `.env.local` and set
-   `NEXT_PUBLIC_WEB3FORMS_KEY=your-key`. `.env.local` is gitignored.
-3. Production: in **Vercel → Settings → Environment Variables**, add
-   `NEXT_PUBLIC_WEB3FORMS_KEY` with the same value, then redeploy.
+1. On the Gmail account (`prism.ai.organization@gmail.com`), enable **2-Step
+   Verification**, then go to **Google Account → Security → 2-Step Verification →
+   App passwords** and generate a 16-character app password.
+2. Local dev: copy `.env.example` → `.env.local` and set:
+   ```
+   GMAIL_USER=prism.ai.organization@gmail.com
+   GMAIL_APP_PASSWORD=your16charapppassword
+   ```
+   `.env.local` is gitignored — the password never enters git.
+3. Production: in **Vercel → Settings → Environment Variables**, add `GMAIL_USER`
+   and `GMAIL_APP_PASSWORD`, then redeploy.
 
-**Fallback:** if the key is unset, the form shows the client-side success state
-without sending — so local dev and CI builds work with no secret.
-
-To swap providers (Formspree, a Next route handler + Resend, etc.), replace the
-`fetch` in `handleSubmit`; the states and validation stay the same.
+**Dev fallback:** if either variable is missing, the route logs the payload and
+returns `ok:true` (no email sent) — so local builds and CI pass without credentials.
 
 ## Booking link
 
@@ -108,10 +113,10 @@ picked up everywhere.
 ## SEO & social
 
 - `metadataBase` + canonical are set in [app/layout.jsx](app/layout.jsx).
-- Open Graph / Twitter card image is generated at build via
-  [app/opengraph-image.jsx](app/opengraph-image.jsx) (`next/og`), reused for both.
+- Open Graph / Twitter card image: [app/opengraph-image.png](app/opengraph-image.png)
+  (1200×630, static), reused for both.
 - Favicon: [app/icon.svg](app/icon.svg); Apple touch icon:
-  [app/apple-icon.jsx](app/apple-icon.jsx) (180×180).
+  [app/apple-icon.png](app/apple-icon.png) (180×180).
 - [app/robots.js](app/robots.js) (allow all) + [app/sitemap.js](app/sitemap.js).
 
 Update `SITE_URL` in [lib/site.js](lib/site.js) once the final domain is live — it
@@ -122,7 +127,14 @@ drives `metadataBase`, canonical, sitemap, and robots.
 1. Push this repo to GitHub.
 2. In Vercel, **Add New → Project** and import the repo.
 3. Framework is auto-detected as **Next.js** — no build settings to change.
-4. Add the `NEXT_PUBLIC_WEB3FORMS_KEY` environment variable (see above) so the
-   contact form delivers email. The site builds and runs without it (form falls
-   back to a client-side success state).
+4. Add the `GMAIL_USER` and `GMAIL_APP_PASSWORD` environment variables (see above)
+   so the contact form delivers email. The site builds and runs without them (the
+   route uses a dev fallback that sends nothing).
 5. **Deploy.**
+
+## Team
+
+Founder cards render from the `TEAM` array in [lib/site.js](lib/site.js). Drop real
+photos into `/public/team/` and set each member's `name`, `role`, `bio`, `photo`
+(e.g. `/team/founder-1.jpg`), and `linkedin`. Until then, neutral initial-based
+placeholder avatars are shown.

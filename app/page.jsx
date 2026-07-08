@@ -1,9 +1,13 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Stats from "@/components/Stats";
 import Vision from "@/components/Vision";
-import Features from "@/components/Features";
-import Highlights from "@/components/Highlights";
+import Solutions from "@/components/Solutions";
+import Services from "@/components/Services";
+import Packages from "@/components/Packages";
+import HowItWorks from "@/components/HowItWorks";
 import Comparison from "@/components/Comparison";
+import Team from "@/components/Team";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -13,10 +17,14 @@ export default function Page() {
       <Navbar />
       <main>
         <Hero />
+        <Stats />
         <Vision />
-        <Features />
-        <Highlights />
+        <Solutions />
+        <Services />
+        <Packages />
+        <HowItWorks />
         <Comparison />
+        <Team />
         <FinalCTA />
       </main>
       <Footer />

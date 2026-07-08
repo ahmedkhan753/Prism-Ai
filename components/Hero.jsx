@@ -88,18 +88,15 @@ export default function Hero() {
             />
           </a>
           <a
-            href="#features"
+            href="#solutions"
             className="inline-flex w-full items-center justify-center rounded-full border border-line bg-white px-6 py-3.5 text-sm font-semibold text-ink transition-colors duration-200 hover:bg-mist sm:w-auto"
           >
             See how it works
           </a>
         </motion.div>
 
-        <motion.div
-          variants={item}
-          className="mx-auto mt-14 w-full max-w-[520px]"
-        >
-          <PrismSignature className="w-full motion-safe:animate-floaty" />
+        <motion.div variants={item} className="mx-auto mt-14 w-full max-w-[520px]">
+          <PrismSignature className="w-full" />
         </motion.div>
       </motion.div>
     </section>

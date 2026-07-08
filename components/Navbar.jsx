@@ -7,8 +7,9 @@ import Logo from "@/components/Logo";
 import { demoLinkProps } from "@/lib/site";
 
 const LINKS = [
-  { label: "Features", href: "#features" },
-  { label: "Compare", href: "#compare" },
+  { label: "Services", href: "#services" },
+  { label: "Packages", href: "#packages" },
+  { label: "Team", href: "#team" },
   { label: "Contact", href: "#contact" },
 ];
 
