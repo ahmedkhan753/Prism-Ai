@@ -6,6 +6,7 @@ import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
+import MotionProvider from "@/components/MotionProvider";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -47,7 +48,9 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   );
 }

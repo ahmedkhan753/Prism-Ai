@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { MessagesSquare, Workflow, Sparkles } from "lucide-react";
+import AnimatedHeading from "@/components/AnimatedHeading";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -37,16 +38,13 @@ export default function Solutions() {
     <section id="solutions" className="py-20 sm:py-24">
       <div className="mx-auto max-w-container px-5 sm:px-8">
         <div className="max-w-2xl">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: EASE }}
+          <AnimatedHeading
             className="text-3xl font-semibold text-ink sm:text-4xl"
-          >
-            Everything your front office does —{" "}
-            <span className="gradient-text">automated.</span>
-          </motion.h2>
+            parts={[
+              { text: "Everything your front office does —" },
+              { text: "automated.", gradient: true },
+            ]}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

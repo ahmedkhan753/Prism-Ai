@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import AnimatedHeading from "@/components/AnimatedHeading";
 import {
   PhoneCall,
   MessageCircle,
@@ -85,15 +86,13 @@ export default function Services() {
     <section id="services" className="py-20 sm:py-24">
       <div className="mx-auto max-w-container px-5 sm:px-8">
         <div className="max-w-2xl">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: EASE }}
+          <AnimatedHeading
             className="text-3xl font-semibold text-ink sm:text-4xl"
-          >
-            Built for <span className="gradient-text">real estate &amp; construction</span>
-          </motion.h2>
+            parts={[
+              { text: "Built for" },
+              { text: "real estate & construction", gradient: true },
+            ]}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

@@ -1,10 +1,12 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 
 // Hero centerpiece — matches the logo mark: a dark triangular prism at the base
 // with four spectrum rays rising and fanning slightly upward. Rays draw on load,
-// then shimmer gently; the whole mark floats slowly.
+// then shimmer gently; the whole mark floats slowly. Under prefers-reduced-motion
+// the global MotionConfig neutralizes the transform (float) while the rays still
+// resolve to full opacity — DOM stays identical, so no hydration mismatch.
 const RAYS = [
   { d: "M100 96 L64 20", color: "#7C3AED" },
   { d: "M100 96 L86 8", color: "#2563EB" },
@@ -15,8 +17,6 @@ const RAYS = [
 const EASE = [0.22, 1, 0.36, 1];
 
 export default function PrismSignature({ className = "" }) {
-  const reduce = useReducedMotion();
-
   return (
     <div className={`relative ${className}`}>
       {/* soft radial glow behind the mark */}
@@ -35,12 +35,8 @@ export default function PrismSignature({ className = "" }) {
         fill="none"
         role="img"
         aria-label="Prism refraction mark"
-        animate={reduce ? undefined : { y: [0, -10, 0] }}
-        transition={
-          reduce
-            ? undefined
-            : { duration: 6, ease: "easeInOut", repeat: Infinity }
-        }
+        animate={{ y: [0, -10, 0] }}
+        transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
       >
         {/* rising spectrum rays */}
         <g strokeWidth="9" strokeLinecap="round" fill="none">
@@ -49,26 +45,20 @@ export default function PrismSignature({ className = "" }) {
               key={ray.color}
               d={ray.d}
               stroke={ray.color}
-              initial={reduce ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-              whileInView={
-                reduce ? undefined : { pathLength: 1, opacity: [0, 1, 0.72, 1] }
-              }
+              initial={{ pathLength: 0, opacity: 0 }}
+              whileInView={{ pathLength: 1, opacity: [0, 1, 0.72, 1] }}
               viewport={{ once: true }}
-              transition={
-                reduce
-                  ? undefined
-                  : {
-                      pathLength: { duration: 0.9, ease: EASE, delay: 0.15 + i * 0.12 },
-                      opacity: {
-                        duration: 3,
-                        ease: "easeInOut",
-                        delay: 0.15 + i * 0.12,
-                        repeat: Infinity,
-                        repeatType: "mirror",
-                        times: [0, 0.3, 0.65, 1],
-                      },
-                    }
-              }
+              transition={{
+                pathLength: { duration: 0.9, ease: EASE, delay: 0.15 + i * 0.12 },
+                opacity: {
+                  duration: 3,
+                  ease: "easeInOut",
+                  delay: 0.15 + i * 0.12,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  times: [0, 0.3, 0.65, 1],
+                },
+              }}
             />
           ))}
         </g>
@@ -77,10 +67,10 @@ export default function PrismSignature({ className = "" }) {
         <motion.path
           d="M100 96 L54 172 L146 172 Z"
           fill="#0C1524"
-          initial={reduce ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
-          whileInView={reduce ? undefined : { opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          transition={reduce ? undefined : { duration: 0.6, ease: EASE }}
+          transition={{ duration: 0.6, ease: EASE }}
           style={{ transformOrigin: "100px 130px" }}
         />
       </motion.svg>

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import AnimatedHeading from "@/components/AnimatedHeading";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -41,15 +42,11 @@ export default function HowItWorks() {
     <section className="py-20 sm:py-28">
       <div className="mx-auto max-w-container px-5 sm:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: EASE }}
+          <AnimatedHeading
+            align="center"
             className="text-3xl font-semibold text-ink sm:text-4xl"
-          >
-            Live in <span className="gradient-text">days, not months.</span>
-          </motion.h2>
+            parts={[{ text: "Live in" }, { text: "days, not months.", gradient: true }]}
+          />
         </div>
 
         <div className="mt-14 flex flex-col gap-10 md:flex-row md:items-start md:gap-0">

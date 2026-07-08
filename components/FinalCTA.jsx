@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
+import AnimatedHeading from "@/components/AnimatedHeading";
+import Aurora from "@/components/Aurora";
 import { CONTACT_EMAIL } from "@/lib/site";
 
 const EASE = [0.22, 1, 0.36, 1];
@@ -80,7 +82,8 @@ export default function FinalCTA() {
   const loading = status === "loading";
 
   return (
-    <section id="contact" className="py-20 sm:py-28">
+    <section id="contact" className="relative overflow-hidden py-20 sm:py-28">
+      <Aurora variant="soft" />
       <div className="mx-auto max-w-container px-5 sm:px-8">
         <div className="relative overflow-hidden rounded-3xl border border-line bg-mist px-6 py-14 sm:px-12">
           {/* soft top glow */}
@@ -103,15 +106,11 @@ export default function FinalCTA() {
             >
               Get started
             </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: EASE, delay: 0.06 }}
+            <AnimatedHeading
+              align="center"
               className="mt-5 text-3xl font-semibold text-ink sm:text-4xl"
-            >
-              Ready to put <span className="gradient-text">AI to work?</span>
-            </motion.h2>
+              parts={[{ text: "Ready to put" }, { text: "AI to work?", gradient: true }]}
+            />
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}

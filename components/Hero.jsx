@@ -1,17 +1,17 @@
 "use client";
 
+import { Fragment } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import PrismSignature from "@/components/PrismSignature";
+import Aurora from "@/components/Aurora";
 import { demoLinkProps } from "@/lib/site";
 
 const EASE = [0.22, 1, 0.36, 1];
 
 const container = {
   hidden: {},
-  show: {
-    transition: { staggerChildren: 0.12, delayChildren: 0.05 },
-  },
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.05 } },
 };
 
 const item = {
@@ -19,10 +19,46 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 };
 
+const wordContainer = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.07 } },
+};
+
+const wordItem = {
+  hidden: { opacity: 0, y: "0.6em", filter: "blur(10px)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.6, ease: EASE },
+  },
+};
+
+function Line({ text, gradient }) {
+  const ws = text.split(" ");
+  return (
+    <span className="block">
+      {ws.map((w, i) => (
+        <Fragment key={i}>
+          <motion.span
+            variants={wordItem}
+            className={`inline-block ${gradient ? "gradient-text" : ""}`}
+            style={{ willChange: "transform, opacity, filter" }}
+          >
+            {w}
+          </motion.span>
+          {i < ws.length - 1 ? " " : ""}
+        </Fragment>
+      ))}
+    </span>
+  );
+}
+
 export default function Hero() {
   return (
     <section id="top" className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-      {/* Ambient background: dot-grid with radial mask + soft glow */}
+      {/* Ambient background: drifting aurora + masked dot-grid + soft glow */}
+      <Aurora variant="hero" />
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div
           className="absolute inset-0 dot-grid"
@@ -31,13 +67,6 @@ export default function Hero() {
               "radial-gradient(120% 90% at 50% 30%, #000 20%, transparent 70%)",
             WebkitMaskImage:
               "radial-gradient(120% 90% at 50% 30%, #000 20%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute left-1/2 top-24 h-[420px] w-[720px] -translate-x-1/2 rounded-full blur-3xl"
-          style={{
-            background:
-              "radial-gradient(closest-side, rgba(124,58,237,0.14), rgba(37,99,235,0.10), transparent)",
           }}
         />
       </div>
@@ -49,19 +78,18 @@ export default function Hero() {
         className="mx-auto max-w-container px-5 text-center sm:px-8"
       >
         <motion.div variants={item} className="flex justify-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-4 py-1.5 text-xs font-medium text-muted backdrop-blur">
-            <span className="h-1.5 w-1.5 rounded-full bg-spectrum-violet" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-line bg-white/70 px-4 py-1.5 text-xs font-medium text-muted shadow-sm backdrop-blur">
+            <span className="h-1.5 w-1.5 rounded-full spectrum-bg" />
             Built for Real Estate &amp; Construction
           </span>
         </motion.div>
 
         <motion.h1
-          variants={item}
+          variants={wordContainer}
           className="mx-auto mt-6 max-w-3xl text-4xl font-semibold leading-[1.08] text-ink sm:text-6xl"
         >
-          Automate the busywork.
-          <br />
-          <span className="gradient-text">Close more deals.</span>
+          <Line text="Automate the busywork." />
+          <Line text="Close more deals." gradient />
         </motion.h1>
 
         <motion.p
@@ -79,12 +107,16 @@ export default function Hero() {
         >
           <a
             {...demoLinkProps()}
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 sm:w-auto"
+            className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-spectrum-violet/20 transition-transform duration-200 hover:-translate-y-0.5 sm:w-auto"
           >
-            Book a Demo
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 spectrum-bg"
+            />
+            <span className="relative">Book a Demo</span>
             <ArrowRight
               size={17}
-              className="transition-transform duration-200 group-hover:translate-x-0.5"
+              className="relative transition-transform duration-200 group-hover:translate-x-0.5"
             />
           </a>
           <a

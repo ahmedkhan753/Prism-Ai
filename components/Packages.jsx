@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
+import AnimatedHeading from "@/components/AnimatedHeading";
+import Aurora from "@/components/Aurora";
 
 const EASE = [0.22, 1, 0.36, 1];
 
@@ -51,18 +53,15 @@ const cardVariants = {
 
 export default function Packages() {
   return (
-    <section id="packages" className="py-20 sm:py-28">
+    <section id="packages" className="relative overflow-hidden py-20 sm:py-28">
+      <Aurora variant="warm" />
       <div className="mx-auto max-w-container px-5 sm:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: EASE }}
+          <AnimatedHeading
+            align="center"
             className="text-3xl font-semibold text-ink sm:text-4xl"
-          >
-            Solutions for <span className="gradient-text">every stage</span>
-          </motion.h2>
+            parts={[{ text: "Solutions for" }, { text: "every stage", gradient: true }]}
+          />
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
