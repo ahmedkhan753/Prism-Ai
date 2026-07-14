@@ -18,6 +18,18 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Prism ChatWidget", () => {
   test.beforeEach(async ({ page }) => {
+    // Mock the backend API route so tests are deterministic, run fast,
+    // and don't fail due to external API quota/rate-limits (like HTTP 429)
+    await page.route("**/api/chat", async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          reply: "Prism provides AI voice and text solutions for real estate and construction. Book a demo today!",
+        }),
+      });
+    });
+
     // Clear persisted chat state so every test starts fresh
     await page.goto("/");
     await page.evaluate(() => localStorage.removeItem("prism_chat"));
@@ -78,19 +90,24 @@ test.describe("Prism ChatWidget", () => {
 
     // Clear chat
     await page.getByRole("button", { name: /clear chat/i }).click();
-
+ 
     // Should be back to greeting only — user message gone
-    await expect(page.getByText("What services do you offer?")).not.toBeVisible();
+    await expect(page.getByTestId("user-message")).not.toBeVisible();
     await expect(page.getByText(/I'm the Prism assistant/i)).toBeVisible();
   });
-
+ 
   test("closes the panel with the close button", async ({ page }) => {
     await page.getByRole("button", { name: /open chat/i }).click();
     await expect(
       page.getByRole("dialog", { name: /prism assistant chat/i })
     ).toBeVisible();
-
-    await page.getByRole("button", { name: /close chat/i }).click();
+ 
+    // Click the close button specifically inside the dialog to avoid ambiguity
+    // with the main floating button's dynamic label
+    await page
+      .getByRole("dialog", { name: /prism assistant chat/i })
+      .getByRole("button", { name: /close chat/i })
+      .click();
     await expect(
       page.getByRole("dialog", { name: /prism assistant chat/i })
     ).not.toBeVisible();

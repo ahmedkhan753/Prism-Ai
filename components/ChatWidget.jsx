@@ -109,6 +109,7 @@ function Bubble({ msg }) {
         </span>
       )}
       <div
+        data-testid={isUser ? "user-message" : "assistant-message"}
         className={`max-w-[78%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
           isUser
             ? "rounded-tr-sm bg-ink text-white"
@@ -178,6 +179,18 @@ export default function ChatWidget() {
       const t = setTimeout(() => inputRef.current?.focus(), 80);
       return () => clearTimeout(t);
     }
+  }, [isOpen]);
+
+  // ── Global Escape key listener ──
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleGlobalKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, [isOpen]);
 
   // ── Focus trap ──
