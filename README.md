@@ -31,15 +31,17 @@ npm run start    # serve the production build
 
 ```
 app/
-  layout.jsx        fontsource imports + metadata + <html>/<body>
+  layout.jsx        fontsource imports + metadata + <html>/<body> + <ChatWidget />
   globals.css       tailwind directives, tokens, utilities, reduced-motion
   page.jsx          composes sections in order
   api/contact/route.js  Nodemailer/Gmail SMTP contact endpoint (serverless)
+  api/chat/route.js     Gemini AI chatbot endpoint (serverless, Node runtime)
   icon.svg          tab favicon (file convention)
   apple-icon.png · opengraph-image.png   generated brand images (static)
   robots.js · sitemap.js
 components/
   Logo.jsx          Prism logo mark SVG (size prop)
+  ChatWidget.jsx    floating AI chatbot widget (button + panel, localStorage state)
   PrismSignature.jsx  animated hero prism (rays draw up + shimmer + float)
   Reveal.jsx        motion fade-up wrapper (whileInView, once)
   Navbar.jsx        sticky nav, blur-on-scroll, mobile menu
@@ -56,6 +58,8 @@ components/
   Footer.jsx        brand + Product/Social columns
 lib/
   site.js           email, SITE_URL, BOOKING_URL, SOCIAL_LINKS, TEAM + helpers
+tests/
+  chatbot.spec.js   Playwright E2E tests for the chatbot widget
 ```
 
 Page order: **Navbar → Hero → Stats → Vision → Solutions → Services → Packages →
@@ -104,6 +108,45 @@ email, and includes a hidden honeypot (`botcheck`) for spam.
 **Dev fallback:** if either variable is missing, the route logs the payload and
 returns `ok:true` (no email sent) — so local builds and CI pass without credentials.
 
+## AI Chatbot (floating widget)
+
+A floating chat widget appears on every page (bottom-right corner). It answers
+visitor questions about Prism's services using **Google Gemini 2.0 Flash**,
+powered by a server-side `/api/chat` route — the API key is never exposed to
+the browser.
+
+**Get a free Gemini API key:**
+
+1. Go to **[Google AI Studio](https://aistudio.google.com/apikey)** and sign in
+   with any Google account.
+2. Click **"Create API key"** — the free tier covers the chatbot's usage.
+3. Copy the key.
+
+**Local dev:**
+
+Add it to `.env.local` (gitignored):
+```
+GEMINI_API_KEY=your_key_here
+```
+
+**Dev fallback:** if `GEMINI_API_KEY` is missing the widget shows a friendly
+canned message so local builds and CI work without a key.
+
+**Production (Vercel):**
+
+In **Vercel → Settings → Environment Variables**, add:
+```
+GEMINI_API_KEY=your_key_here
+```
+> ⚠️ Never use a `NEXT_PUBLIC_` prefix — the key must stay server-side only.
+
+**Running E2E tests:**
+
+```bash
+npx playwright install chromium   # first time only
+npx playwright test               # runs tests/chatbot.spec.js
+```
+
 ## Booking link
 
 Every "Book a Demo" CTA scrolls to `#contact`. To point them at Calendly (or any
@@ -127,9 +170,10 @@ drives `metadataBase`, canonical, sitemap, and robots.
 1. Push this repo to GitHub.
 2. In Vercel, **Add New → Project** and import the repo.
 3. Framework is auto-detected as **Next.js** — no build settings to change.
-4. Add the `GMAIL_USER` and `GMAIL_APP_PASSWORD` environment variables (see above)
-   so the contact form delivers email. The site builds and runs without them (the
-   route uses a dev fallback that sends nothing).
+4. Add environment variables (see above sections) so the contact form delivers
+   email and the chatbot works:
+   - `GMAIL_USER` and `GMAIL_APP_PASSWORD` (for the contact form)
+   - `GEMINI_API_KEY` (for the AI chatbot — free key from [AI Studio](https://aistudio.google.com/apikey))
 5. **Deploy.**
 
 ## Deploy with Docker (self-hosted server)

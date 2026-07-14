@@ -7,6 +7,8 @@ import "@fontsource/inter/600.css";
 import "./globals.css";
 import { SITE_URL } from "@/lib/site";
 import MotionProvider from "@/components/MotionProvider";
+import ChatWidget from "@/components/ChatWidget";
+
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -49,7 +51,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          {children}
+          <ChatWidget />
+        </MotionProvider>
       </body>
     </html>
   );
