@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // ─── Model ───────────────────────────────────────────────────────────────────
-const GEMINI_MODEL = "gemini-2.0-flash";
+const GEMINI_MODEL = "gemini-3.5-flash";
 
 // ─── System prompt (knowledge base) ──────────────────────────────────────────
 const SYSTEM_PROMPT = `You are "Prism Assistant", the friendly AI assistant on the website of Prism — an AI solutions agency that builds AI automation for real estate and construction businesses.
