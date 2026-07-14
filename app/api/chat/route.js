@@ -142,7 +142,10 @@ export async function POST(request) {
     return Response.json({ reply });
   } catch (err) {
     // Never leak credentials or stack traces to the client
+    // Log enough detail server-side to diagnose API key / quota issues
     console.error("[chat] Gemini error:", err?.message ?? err);
+    if (err?.status) console.error("[chat] Gemini status:", err.status);
+    if (err?.errorDetails) console.error("[chat] Gemini details:", JSON.stringify(err.errorDetails));
     return Response.json({ reply: FALLBACK_REPLY }, { status: 200 });
   }
 }
